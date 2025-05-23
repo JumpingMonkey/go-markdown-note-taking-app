@@ -1,0 +1,397 @@
+openapi: 3.0.3
+info:
+  title: Go Markdown Note-Taking API
+  description: A simple note-taking API that allows users to upload markdown files, check grammar, save notes, and render them as HTML
+  version: 1.0.0
+  contact:
+    name: API Support
+    url: https://github.com/JumpingMonkey/go-markdown-note-taking-app
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://api.example.com/api/v1
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Check if the service is running
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /notes:
+    get:
+      summary: List all notes
+      description: Retrieve a list of all saved notes (metadata only)
+      tags:
+        - Notes
+      responses:
+        '200':
+          description: List of notes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NoteMetadata'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Create a new note
+      description: Create a new note with markdown content
+      tags:
+        - Notes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNoteRequest'
+      responses:
+        '201':
+          description: Note created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /notes/{id}:
+    get:
+      summary: Get a specific note
+      description: Retrieve a note by its ID
+      tags:
+        - Notes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Note ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Note retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '404':
+          description: Note not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete a note
+      description: Delete a note by its ID
+      tags:
+        - Notes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Note ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Note deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Note deleted successfully
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /notes/{id}/html:
+    get:
+      summary: Get note as HTML
+      description: Retrieve a note rendered as HTML
+      tags:
+        - Notes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Note ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: HTML content of the note
+          content:
+            text/html:
+              schema:
+                type: string
+        '404':
+          description: Note not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /notes/upload:
+    post:
+      summary: Upload a markdown file
+      description: Upload a markdown file to create a new note
+      tags:
+        - Notes
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Markdown file to upload
+              required:
+                - file
+      responses:
+        '201':
+          description: File uploaded and note created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '400':
+          description: Invalid file or file type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /notes/check-grammar:
+    post:
+      summary: Check grammar
+      description: Check the grammar of provided text
+      tags:
+        - Grammar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckGrammarRequest'
+      responses:
+        '200':
+          description: Grammar check completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrammarCheckResult'
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the note
+        title:
+          type: string
+          description: Title of the note
+        content:
+          type: string
+          description: Markdown content of the note
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+      required:
+        - id
+        - title
+        - content
+        - created_at
+        - updated_at
+
+    NoteMetadata:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the note
+        title:
+          type: string
+          description: Title of the note
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+      required:
+        - id
+        - title
+        - created_at
+        - updated_at
+
+    CreateNoteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the note
+          minLength: 1
+        content:
+          type: string
+          description: Markdown content of the note
+          minLength: 1
+      required:
+        - title
+        - content
+
+    CheckGrammarRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          description: Text to check for grammar issues
+          minLength: 1
+      required:
+        - content
+
+    GrammarCheckResult:
+      type: object
+      properties:
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrammarIssue'
+          description: List of grammar issues found
+        score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Grammar score (0-100)
+      required:
+        - issues
+        - score
+
+    GrammarIssue:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Description of the grammar issue
+        offset:
+          type: integer
+          description: Character offset where the issue starts
+        length:
+          type: integer
+          description: Length of the problematic text
+        replacement:
+          type: string
+          description: Suggested replacement text
+        type:
+          type: string
+          description: Type of grammar issue
+          enum:
+            - spelling
+            - grammar
+            - punctuation
+            - capitalization
+            - spacing
+            - style
+      required:
+        - message
+        - offset
+        - length
+        - type
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+      required:
+        - error
+
+tags:
+  - name: Notes
+    description: Operations related to note management
+  - name: Grammar
+    description: Grammar checking operations
