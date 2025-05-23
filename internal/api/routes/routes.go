@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/JumpingMonkey/go-markdown-note-taking-app/internal/api/handlers"
+	"github.com/JumpingMonkey/go-markdown-note-taking-app/internal/api/middleware"
 	"github.com/JumpingMonkey/go-markdown-note-taking-app/internal/services/grammar"
 	"github.com/JumpingMonkey/go-markdown-note-taking-app/internal/services/markdown"
 	"github.com/JumpingMonkey/go-markdown-note-taking-app/internal/services/storage"
@@ -10,6 +11,10 @@ import (
 
 // Setup configures all routes
 func Setup(router *gin.Engine, storage storage.Storage, markdown *markdown.Service, grammar *grammar.Service) {
+	// Apply global middleware
+	router.Use(middleware.Logger())
+	router.Use(middleware.CORS())
+	
 	// Create handlers
 	notesHandler := handlers.NewNotesHandler(storage, markdown, grammar)
 

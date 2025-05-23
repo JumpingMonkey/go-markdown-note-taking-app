@@ -1,0 +1,178 @@
+{
+  "info": {
+    "_postman_id": "f5a1e2b3-d4c5-6e7f-8a9b-0c1d2e3f4a5b",
+    "name": "Go Markdown Note-Taking API",
+    "description": "A collection for testing the Go Markdown Note-Taking API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Check if the API service is running properly"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Note",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Sample Note\",\n  \"content\": \"# Sample Note\\n\\nThis is a sample markdown note created through the API.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/notes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "notes"]
+        },
+        "description": "Create a new markdown note"
+      },
+      "response": []
+    },
+    {
+      "name": "List Notes",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/notes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "notes"]
+        },
+        "description": "Get a list of all saved notes"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Note",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/notes/{{noteId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "notes", "{{noteId}}"]
+        },
+        "description": "Get a specific note by ID"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Note as HTML",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/notes/{{noteId}}/html",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "notes", "{{noteId}}", "html"]
+        },
+        "description": "Get a specific note rendered as HTML"
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Note",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/notes/{{noteId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "notes", "{{noteId}}"]
+        },
+        "description": "Delete a specific note by ID"
+      },
+      "response": []
+    },
+    {
+      "name": "Upload Note",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": ""
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/notes/upload",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "notes", "upload"]
+        },
+        "description": "Upload a markdown file to create a new note"
+      },
+      "response": []
+    },
+    {
+      "name": "Check Grammar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"content\": \"this sentence has multiple grammar issues. it needs to be checked  properly\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/notes/check-grammar",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "notes", "check-grammar"]
+        },
+        "description": "Check grammar of provided text"
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "noteId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
