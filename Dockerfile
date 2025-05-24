@@ -2,7 +2,7 @@
 FROM golang:1.21-alpine AS builder
 
 # Install build dependencies
-RUN apk add --no-cache git
+RUN apk add --no-cache git gcc musl-dev
 
 # Set working directory
 WORKDIR /app
@@ -10,14 +10,20 @@ WORKDIR /app
 # Copy go mod files
 COPY go.mod go.sum ./
 
-# Download dependencies
-RUN go mod download
+# Fix dependencies and generate proper go.sum file
+RUN go mod tidy && go mod download && go mod verify
 
 # Copy source code
 COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main cmd/server/main.go
+# Clean any stale modules or cached files
+RUN go clean -cache -modcache -i -r
+
+# Show environment for debugging
+RUN go env
+
+# Build the application with detailed error output
+RUN CGO_ENABLED=0 GOOS=linux go build -v -a -installsuffix cgo -tags netgo -ldflags='-w -extldflags "-static"' -o main cmd/server/main.go
 
 # Final stage
 FROM alpine:latest
