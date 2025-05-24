@@ -26,16 +26,33 @@ func (s *Service) Check(text string) (*models.GrammarCheckResult, error) {
 	
 	// Simple checks for demonstration
 	
-	// Check for multiple spaces
-	if strings.Contains(text, "  ") {
-		idx := strings.Index(text, "  ")
-		issues = append(issues, models.GrammarIssue{
-			Message:     "Multiple consecutive spaces found",
-			Offset:      idx,
-			Length:      2,
-			Replacement: " ",
-			Type:        "spacing",
-		})
+	// Check for multiple spaces - find all occurrences
+	for i := 0; i < len(text)-1; i++ {
+		if text[i] == ' ' && text[i+1] == ' ' {
+			// Found consecutive spaces
+			spaceStart := i
+			spaceLength := 2
+			
+			// Count how many consecutive spaces there are
+			for j := i + 2; j < len(text); j++ {
+				if text[j] == ' ' {
+					spaceLength++
+				} else {
+					break
+				}
+			}
+			
+			issues = append(issues, models.GrammarIssue{
+				Message:     "Multiple consecutive spaces found",
+				Offset:      spaceStart,
+				Length:      spaceLength,
+				Replacement: " ",
+				Type:        "spacing",
+			})
+			
+			// Skip ahead past the spaces we just processed
+			i += spaceLength - 1
+		}
 	}
 	
 	// Check for missing capital letter at start
