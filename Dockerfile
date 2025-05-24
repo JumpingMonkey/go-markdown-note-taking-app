@@ -8,9 +8,14 @@ RUN apk add --no-cache git gcc musl-dev
 WORKDIR /app
 
 # Copy go mod files
-COPY go.mod go.sum ./
+COPY go.mod ./
 
-# Fix dependencies and generate proper go.sum file
+# Initialize modules and generate go.sum
+RUN go mod init github.com/JumpingMonkey/go-markdown-note-taking-app || true
+RUN go get github.com/gin-gonic/gin@v1.9.1
+RUN go get github.com/google/uuid@v1.5.0
+RUN go get github.com/russross/blackfriday/v2@v2.1.0
+RUN go get github.com/stretchr/testify@v1.8.4
 RUN go mod tidy && go mod download && go mod verify
 
 # Copy source code
