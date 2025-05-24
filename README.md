@@ -2,6 +2,8 @@
 
 A simple note-taking API built with Go that allows users to upload markdown files, check grammar, save notes, and render them as HTML.
 
+Based on [Markdown Note-Taking App Project](https://roadmap.sh/projects/markdown-note-taking-app) from roadmap.sh.
+
 ## Features
 
 - ✅ Upload and save markdown notes
