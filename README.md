@@ -22,7 +22,7 @@ go-markdown-note-taking-app/
 ├── internal/
 │   ├── api/
 │   │   ├── handlers/         # HTTP handlers
-│   │   ├── middleware/       # Middleware functions
+│   │   ├── middleware/       # Middleware functions (CORS, logging)
 │   │   └── routes/           # Route definitions
 │   ├── config/               # Configuration management
 │   ├── models/               # Data models
@@ -31,9 +31,13 @@ go-markdown-note-taking-app/
 │   │   ├── markdown/         # Markdown processing service
 │   │   └── storage/          # Note storage service
 │   └── utils/                # Utility functions
+│       ├── errors/           # Error handling utilities
+│       ├── file/             # File handling utilities
+│       └── testutils/        # Testing utilities
 ├── api/
 │   └── openapi.yaml          # OpenAPI specification
 ├── docs/                     # Documentation
+├── examples/                 # Example markdown files
 ├── scripts/                  # Build and deployment scripts
 ├── docker/                   # Docker-related files
 ├── notes/                    # Directory for stored notes
@@ -143,7 +147,11 @@ The application can be configured using environment variables:
 ### Running Tests
 
 ```bash
+# Local tests (if Go is installed)
 go test ./...
+
+# Docker-based tests (no Go installation required)
+./scripts/run-tests.sh
 ```
 
 ### Building the Application
@@ -173,6 +181,14 @@ docker build -t go-markdown-note-app .
 ```bash
 docker-compose up -d
 ```
+
+### Common Docker Issues
+
+If you encounter build errors related to Go modules during the Docker build process, try the following solutions:
+
+1. Ensure your `go.mod` and `go.sum` files are properly initialized
+2. Use the provided Docker configuration which includes all necessary build dependencies
+3. For detailed logs, check the Docker build output with the `-v` flag enabled
 
 This will start the application along with any required services.
 

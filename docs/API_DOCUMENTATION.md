@@ -199,14 +199,14 @@ curl -X POST http://localhost:8080/api/v1/notes/upload \
 
 ### 8. Check Grammar
 
-Check the grammar of provided text.
+Check the grammar of provided text. The service can detect multiple issues, including capitalization, punctuation, and multiple spaces.
 
 **Endpoint:** `POST /api/v1/notes/check-grammar`
 
 **Request Body:**
 ```json
 {
-  "content": "this is a test sentence"
+  "content": "this is a test sentence  with multiple  spaces"
 }
 ```
 
@@ -222,13 +222,27 @@ Check the grammar of provided text.
       "type": "capitalization"
     },
     {
+      "message": "Multiple consecutive spaces detected",
+      "offset": 19,
+      "length": 2,
+      "replacement": " ",
+      "type": "spacing"
+    },
+    {
+      "message": "Multiple consecutive spaces detected",
+      "offset": 31,
+      "length": 2,
+      "replacement": " ",
+      "type": "spacing"
+    },
+    {
       "message": "Sentence should end with proper punctuation",
-      "offset": 23,
+      "offset": 38,
       "length": 0,
       "type": "punctuation"
     }
   ],
-  "score": 80.0
+  "score": 75.0
 }
 ```
 

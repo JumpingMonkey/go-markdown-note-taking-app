@@ -31,6 +31,7 @@ The Go Markdown Note-Taking App is a RESTful API service that allows users to cr
 - **API Documentation**: OpenAPI 3.0.3
 - **Containerization**: Docker
 - **Testing**: Go standard testing package with testify
+- **Middleware**: CORS support, Request logging
 
 ## Architecture
 
@@ -165,6 +166,30 @@ func TestMarkdownService_ToHTML(t *testing.T) {
 }
 ```
 
+### Test Utilities
+We've created test utilities in `internal/utils/testutils` to simplify test writing:
+
+```go
+// Setup a test router
+router := testutils.SetupRouter()
+
+// Create JSON request for testing
+body := testutils.CreateJSONRequest(t, payload)
+
+// Perform request
+w := testutils.PerformRequest(router, http.MethodPost, "/api/v1/notes", body)
+
+// Create multipart request for file upload testing
+body, contentType := testutils.CreateMultipartRequest(t, "file", filePath)
+```
+
+### Docker-based Testing
+For environments without Go installed, we provide a Docker-based testing script:
+
+```bash
+./scripts/run-tests.sh
+```
+
 ### Integration Tests
 Test API endpoints with real services:
 ```go
@@ -198,6 +223,15 @@ docker-compose up --build
 docker build -t go-markdown-notes:latest .
 docker run -d -p 8080:8080 go-markdown-notes:latest
 ```
+
+#### Docker Build Troubleshooting
+If you encounter build errors related to Go modules, we've made the following improvements to the Docker build process:
+
+1. Added proper build dependencies (gcc, musl-dev) to the Alpine image
+2. Added 'go mod tidy' step to generate a proper go.sum file before dependencies download
+3. Added debugging information with 'go env' to troubleshoot build issues
+4. Improved build flags with static linking options and netgo tag
+5. Added proper error reporting with verbose mode (-v flag)
 
 ### Environment Variables
 - `PORT`: Server port (default: 8080)
