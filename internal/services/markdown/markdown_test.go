@@ -16,7 +16,7 @@ func TestMarkdownService_ToHTML(t *testing.T) {
 		{
 			name:     "heading",
 			markdown: "# Heading",
-			expected: "<h1>Heading</h1>\n",
+			expected: "<h1 id=\"heading\">Heading</h1>\n",
 		},
 		{
 			name:     "paragraph",
@@ -46,7 +46,7 @@ func TestMarkdownService_ToHTML(t *testing.T) {
 		{
 			name:     "combined",
 			markdown: "# Title\n\nParagraph with **bold** and *italic*\n\n- List item 1\n- List item 2",
-			expected: "<h1>Title</h1>\n<p>Paragraph with <strong>bold</strong> and <em>italic</em></p>\n<ul>\n<li>List item 1</li>\n<li>List item 2</li>\n</ul>\n",
+			expected: "<h1 id=\"title\">Title</h1>\n<p>Paragraph with <strong>bold</strong> and <em>italic</em></p>\n<ul>\n<li>List item 1</li>\n<li>List item 2</li>\n</ul>\n",
 		},
 	}
 

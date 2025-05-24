@@ -15,10 +15,10 @@ func EnsureDirectory(path string) error {
 // IsMarkdownFile checks if the filename has a markdown extension
 func IsMarkdownFile(filename string) bool {
 	extensions := []string{".md", ".markdown"}
-	ext := strings.ToLower(filepath.Ext(filename))
+	extension := strings.ToLower(filepath.Ext(filename))
 	
 	for _, validExt := range extensions {
-		if text == validExt {
+		if extension == validExt {
 			return true
 		}
 	}

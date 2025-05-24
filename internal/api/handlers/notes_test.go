@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/JumpingMonkey/go-markdown-note-taking-app/internal/models"
@@ -24,7 +25,7 @@ func setupTest(t *testing.T) (
 	func(),
 ) {
 	// Create temporary directory for testing
-	tempDir, err := testutils.CreateTempMarkdownFile(t, "# Test Note\nTest content.")
+	tempDir, err := os.MkdirTemp("", "test-notes")
 	require.NoError(t, err)
 
 	// Create services
@@ -49,8 +50,8 @@ func setupTest(t *testing.T) (
 	notes.POST("/check-grammar", handler.CheckGrammar)
 
 	return handler, router, storageService, &markdownService, &grammarService, func() {
-		// Cleanup
-		// Remove temporary directory
+		// Cleanup temporary directory
+		os.RemoveAll(tempDir)
 	}
 }
 

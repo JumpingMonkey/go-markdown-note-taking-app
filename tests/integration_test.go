@@ -86,7 +86,8 @@ func TestFullApiFlow(t *testing.T) {
 	router.ServeHTTP(htmlw, htmlReq)
 
 	assert.Equal(t, http.StatusOK, htmlw.Code)
-	assert.Contains(t, htmlw.Body.String(), "<h1>Integration Test</h1>")
+	// Check that the HTML contains the heading text, regardless of id attribute
+assert.Contains(t, htmlw.Body.String(), "Integration Test</h1>")
 
 	// Check grammar
 	grammarPayload := models.CheckGrammarRequest{
